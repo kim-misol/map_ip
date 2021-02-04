@@ -14,3 +14,4 @@ flask-migrate
 marshmallow-sqlalchemy
 psycopg2-binary
 Pillow
+requests
