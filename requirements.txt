@@ -5,7 +5,6 @@ wtforms
 sqlalchemy
 email-validator==1.0.5
 flask-bcrypt
-flask-crontab
 flask-login
 flask-wtf
 flask-sqlalchemy
