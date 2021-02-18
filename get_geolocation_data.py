@@ -81,18 +81,20 @@ def get_geolocation_info():
     for ip_address in ips:
         link = F"http://api.ipstack.com/{ip_address}?access_key={ACCESS_KEY}"
         response = requests.get(link)
-        json_data = json.loads(response.text)
-        temp_dict = {
-            "name": json_data['ip'],
-            "description": f"{json_data['city']} {json_data['region_name']} {json_data['country_name']}",
-            "zip": json_data['zip'],
-            "lat": json_data['latitude'],
-            "lng": json_data['longitude'],
-            "location": json_data['location'],
-            "country_flag": json_data['location']['country_flag'],
-        }
-
-        geolocation_dict.append(temp_dict)
+        if response.status_code == 200:
+            json_data = json.loads(response.text)
+            temp_dict = {
+                "name": json_data['ip'],
+                "description": f"{json_data['city']} {json_data['region_name']} {json_data['country_name']}",
+                "zip": json_data['zip'],
+                "lat": json_data['latitude'],
+                "lng": json_data['longitude'],
+                "location": json_data['location'],
+                "country_flag": json_data['location']['country_flag'],
+            }
+            geolocation_dict.append(temp_dict)
+        else:
+            pass
 
     return geolocation_dict
 
