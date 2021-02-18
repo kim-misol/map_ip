@@ -3,7 +3,6 @@ from flask import (
 )
 # from map.auth import login_required
 from flask_login import current_user
-from .forms import PostEditForm, PostCreateForm
 from .models import Post, User
 # from . import db, login_manager
 from sqlalchemy import func, or_
