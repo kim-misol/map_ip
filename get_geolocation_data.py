@@ -34,15 +34,68 @@ https://ipstack.com/quickstart
 import json
 import requests
 from instance.config import IP_ADDRESS, ACCESS_KEY
+from api_response import res
 
 
-link = F"http://api.ipstack.com/{IP_ADDRESS}?access_key={ACCESS_KEY}"
-response = requests.get(link)
-json_data = json.loads(response.text)
+def get_ip_addresses():
+    datas = res['data']
+    ips = []
+    for data in datas:
+        ips.append(data['hit_ip_address'])
+    return ips
 
-region_name = json_data['region_name']
-city = json_data['city']
-latitude = json_data['latitude']
-longitude = json_data['longitude']
-location = json_data['location']
-country_flag = location['country_flag']
+
+def get_geolocation_info_1():
+    region_name, city, latitude, longitude, location, country_flag = [], [], [], [], [], []
+    ips = get_ip_addresses()
+
+    i = 0
+    for ip_address in ips:
+        link = F"http://api.ipstack.com/{ip_address}?access_key={ACCESS_KEY}"
+        response = requests.get(link)
+        json_data = json.loads(response.text)
+
+        region_name.append(json_data['region_name'])
+        city.append(json_data['city'])
+        latitude.append(json_data['latitude'])
+        longitude.append(json_data['longitude'])
+        location.append(json_data['location'])
+        country_flag.append(location[i]['country_flag'])
+        i += 1
+
+    geolocation_dict = {
+        "region_name": region_name,
+        "city": city,
+        "latitude": latitude,
+        "longitude": longitude,
+        "location": location,
+        "country_flag": country_flag,
+    }
+    return geolocation_dict
+
+def get_geolocation_info():
+    geolocation_dict = []
+    ips = get_ip_addresses()
+
+    i = 0
+    for ip_address in ips:
+        link = F"http://api.ipstack.com/{ip_address}?access_key={ACCESS_KEY}"
+        response = requests.get(link)
+        json_data = json.loads(response.text)
+        temp_dict = {
+            "name": json_data['ip'],
+            "description": f"{json_data['city']} {json_data['region_name']} {json_data['country_name']}",
+            "zip": json_data['zip'],
+            "lat": json_data['latitude'],
+            "lng": json_data['longitude'],
+            "location": json_data['location'],
+            "country_flag": json_data['location']['country_flag'],
+        }
+
+        geolocation_dict.append(temp_dict)
+
+    return geolocation_dict
+
+
+if __name__ == "__main__":
+    addr_dict = get_geolocation_info()
