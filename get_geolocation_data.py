@@ -73,6 +73,7 @@ def get_geolocation_info_1():
     }
     return geolocation_dict
 
+
 def get_geolocation_info():
     geolocation_dict = []
     ips = get_ip_addresses()
@@ -99,5 +100,21 @@ def get_geolocation_info():
     return geolocation_dict
 
 
+def save_data(data):
+    fname = 'data.py'
+    f = open(f"{fname}", 'w', encoding='UTF-8')
+    content = f"data = {data}"
+    f.write(content)
+    f.close()
+
+
+def get_saved_data():
+    from data import data
+    return data
+
+
 if __name__ == "__main__":
     addr_dict = get_geolocation_info()
+    # save_data(addr_dict)
+    d = get_saved_data()
+    print(d)
