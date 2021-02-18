@@ -27,9 +27,6 @@ def create_app(config='DevelopmentConfig'):
     # define and access the database
     # DB - postgresql
     db.init_app(app)
-    from .models import init_db_command, reset_db_command
-    app.cli.add_command(init_db_command)
-    app.cli.add_command(reset_db_command)
 
     login_manager.init_app(app)
     bcrypt.init_app(app)
