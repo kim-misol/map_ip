@@ -41,53 +41,63 @@ def get_ip_addresses():
     datas = res['data']
     ips = []
     for data in datas:
-        ips.append(data['hit_ip_address'])
+        ips.append(f"{data['hit_ip_address']} {data['hit_date']} {data['hit_time']}")
     return ips
-
-
-def get_geolocation_info_1():
-    region_name, city, latitude, longitude, location, country_flag = [], [], [], [], [], []
-    ips = get_ip_addresses()
-
-    i = 0
-    for ip_address in ips:
-        link = F"http://api.ipstack.com/{ip_address}?access_key={ACCESS_KEY}"
-        response = requests.get(link)
-        json_data = json.loads(response.text)
-
-        region_name.append(json_data['region_name'])
-        city.append(json_data['city'])
-        latitude.append(json_data['latitude'])
-        longitude.append(json_data['longitude'])
-        location.append(json_data['location'])
-        country_flag.append(location[i]['country_flag'])
-        i += 1
-
-    geolocation_dict = {
-        "region_name": region_name,
-        "city": city,
-        "latitude": latitude,
-        "longitude": longitude,
-        "location": location,
-        "country_flag": country_flag,
-    }
-    return geolocation_dict
-
 
 def get_geolocation_info():
     geolocation_dict = []
-    ips = get_ip_addresses()
+    response = get_ip_addresses()
 
     i = 0
-    for ip_address in ips:
+    line = response[0]
+    r = line.split("  ")
+    ip_address = r[0]
+    hit_date = r[1].split(" ")[0]
+    hit_time = r[1].split(" ")[1]
+    link = F"http://api.ipstack.com/{ip_address}?access_key={ACCESS_KEY}"
+    response = requests.get(link)
+    if response.status_code == 200:
+        json_data = json.loads(response.text)
+        # hit date과 time 추가
+        temp_dict = {
+            "name": json_data['ip'],
+            "description": f"{json_data['city']} {json_data['region_name']} {json_data['country_name']}",
+            "zip": json_data['zip'],
+            "hit_date": hit_date,
+            "hit_time": hit_time,
+            "lat": json_data['latitude'],
+            "lng": json_data['longitude'],
+            "location": json_data['location'],
+            "country_flag": json_data['location']['country_flag'],
+        }
+        geolocation_dict.append(temp_dict)
+    else:
+        pass
+
+    return geolocation_dict
+
+
+def get_geolocation_info_origin():
+    geolocation_dict = []
+    response = get_ip_addresses()
+
+    i = 0
+    for line in response:
+        r = line.split("  ")
+        ip_address = r[0]
+        hit_date = r[1].split(" ")[0]
+        hit_time = r[1].split(" ")[1]
         link = F"http://api.ipstack.com/{ip_address}?access_key={ACCESS_KEY}"
         response = requests.get(link)
         if response.status_code == 200:
             json_data = json.loads(response.text)
+            # hit date과 time 추가
             temp_dict = {
                 "name": json_data['ip'],
                 "description": f"{json_data['city']} {json_data['region_name']} {json_data['country_name']}",
                 "zip": json_data['zip'],
+                "hit_date": hit_date,
+                "hit_time": hit_time,
                 "lat": json_data['latitude'],
                 "lng": json_data['longitude'],
                 "location": json_data['location'],
@@ -114,7 +124,13 @@ def get_saved_data():
 
 
 if __name__ == "__main__":
+    # api response 업데이트 시 아래 코드 실행
+    '''
+    1. admin web에서 visitor traffic response를 받아온다
+    2. 복사해서 api_response.py에 json 형태로 저장
+    3. 아래 코드 실행 
+    '''
     addr_dict = get_geolocation_info()
-    # save_data(addr_dict)
+    save_data(addr_dict)
     d = get_saved_data()
     print(d)
