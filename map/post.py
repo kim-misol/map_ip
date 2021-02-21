@@ -1,6 +1,4 @@
-from flask import (
-    Blueprint
-)
+from flask import Blueprint
 
 # from map.auth import login_required
 # to save img file
@@ -41,36 +39,40 @@ def kakao_map():
         averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
         minLevel: 6 // 클러스터 할 최소 지도 레벨
     });
-    console.log("cc")
 }"""
-    geolocation_dict = get_geolocation_info()
+    # geolocation_dict = get_geolocation_info()
+    geolocation_dict = [{'name': '223.38.8.247', 'description': 'Seoul Seoul South Korea', 'zip': '100-011', 'hit_date': '2021-02-20',
+'hit_time': '18:30:55', 'lat': 37.56100082397461, 'lng': 126.98265075683594,
+'location': {'geoname_id': 1835848, 'capital': 'Seoul',
+'languages': [{'code': 'ko', 'name': 'Korean', 'native': '한국어'}],
+'country_flag': 'http://assets.ipstack.com/flags/kr.svg', 'country_flag_emoji': '🇰🇷',
+'country_flag_emoji_unicode': 'U+1F1F0 U+1F1F7', 'calling_code': '82', 'is_eu': False}, 'country_flag': 'http://assets.ipstack.com/flags/kr.svg'}]
+
     data = f""" 
     console.log("{geolocation_dict}");
-    var geolocation_dict = [{geolocation_dict}];"""
+    console.log("bb")
+    var geolocation_dict = {[{'name': '223.38.8.247', 'description': 'Seoul Seoul South Korea', 'zip': '100-011', 'hit_date': '2021-02-20', 
+'hit_time': '18:30:55', 'lat': 37.56100082397461, 'lng': 126.98265075683594, 
+'location': {'geoname_id': 1835848, 'capital': 'Seoul', 
+'languages': [{'code': 'ko', 'name': 'Korean', 'native': '한국어'}], 
+'country_flag': 'http://assets.ipstack.com/flags/kr.svg', 'country_flag_emoji': '🇰🇷', 
+'country_flag_emoji_unicode': 'U+1F1F0 U+1F1F7', 'calling_code': '82', 'is_eu': False}, 'country_flag': 'http://assets.ipstack.com/flags/kr.svg'}]};"""
+    # var geolocation_dict = {geolocation_dict};"""
     markers = """
-    console.log("dd")
+    console.log("cc")
     console.log(geolocation_dict)
 for (var i = 0; i < geolocation_dict.length; i++) {
     let name = geolocation_dict[i]["ip"];
     let addr = geolocation_dict[i]["description"];
     let zip = geolocation_dict[i]["zip"];
+    let hit_date = geolocation_dict[i]["hit_date"];
+    let hit_time = geolocation_dict[i]["hit_time"];
     let lat = geolocation_dict[i]["lat"];
     let lng = geolocation_dict[i]["lng"];
     let country_flag = geolocation_dict[i]["country_flag"];
 
-    // 마커 이미지 선택
-    switch(handle_coffee){
-        case "o":
-            remain_stat = "<span style='color:#3d853b;'>커피 판매 중</span>";
-            imgSelect = 'https://raw.githubusercontent.com/kim-misol/map_coffee/master/img/marker_green_round.png'
-            break;
-        default:
-            remain_stat = "커피 판매 안함"
-            imgSelect = 'https://raw.githubusercontent.com/kim-misol/map_coffee/master/img/marker_green_round.png'
-            break;
-    }
-
     // 마커이미지의 주소입니다
+    imgSelect = 'https://raw.githubusercontent.com/kim-misol/map_coffee/master/img/marker_green_round.png'
     var imageSrc = imgSelect,
     imageSize = new kakao.maps.Size(30, 33), // 마커이미지의 크기입니다
     imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
@@ -104,7 +106,6 @@ clusterer.addMarkers(markers);"""
     end_js = "</script>"
 
     return map_api_html + start_js + map_html + data + markers + zoom_controller + end_js
-
 
 #
 # @bp.route('/posts', methods=['GET'])
