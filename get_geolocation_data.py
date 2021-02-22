@@ -32,9 +32,11 @@ https://ipstack.com/quickstart
 }
 '''
 import json
+
 import requests
-from instance.config import IP_ADDRESS, ACCESS_KEY
+
 from api_response import res
+from instance.config import ACCESS_KEY
 
 
 def get_ip_addresses():
@@ -76,11 +78,10 @@ def get_geolocation_info_test_one_response():
     return geolocation_dict
 
 
-def get_geolocation_info_origin():
+def get_geolocation_info():
     geolocation_dict = []
     response = get_ip_addresses()
 
-    i = 0
     for line in response:
         r = line.split("  ")
         ip_address = r[0]
@@ -99,7 +100,6 @@ def get_geolocation_info_origin():
                 "hit_time": hit_time,
                 "lat": json_data['latitude'],
                 "lng": json_data['longitude'],
-                "location": json_data['location'],
                 "country_flag": json_data['location']['country_flag'],
             }
             geolocation_dict.append(temp_dict)
