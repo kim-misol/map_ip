@@ -44,11 +44,11 @@ def get_ip_addresses():
         ips.append(f"{data['hit_ip_address']} {data['hit_date']} {data['hit_time']}")
     return ips
 
-def get_geolocation_info():
+
+def get_geolocation_info_test_one_response():
     geolocation_dict = []
     response = get_ip_addresses()
 
-    i = 0
     line = response[0]
     r = line.split("  ")
     ip_address = r[0]
@@ -67,7 +67,6 @@ def get_geolocation_info():
             "hit_time": hit_time,
             "lat": json_data['latitude'],
             "lng": json_data['longitude'],
-            "location": json_data['location'],
             "country_flag": json_data['location']['country_flag'],
         }
         geolocation_dict.append(temp_dict)
