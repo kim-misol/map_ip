@@ -11,7 +11,11 @@ bp = Blueprint('post', __name__, url_prefix='/')
 def kakao_map():
     app_key = '14c32e894bc092b7b77d64d68100c5fa'
     map_api_html = f"""<!-- kakao map -->
-<div id="map" style="width:100%;height:100vh; position: relative; z-index: 500;display: inline-block; margin-top:-100px;"></div>
+<div id="map" style="width:100%;height:100vh; position: relative; z-index: 500;display: inline-block;"></div>
+<div class="mb-3">
+  <label for="formGroupExampleInput" class="form-label">Example label</label>
+  <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Example input placeholder">
+</div>
 <!-- KAKAO MAP API -->
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey={app_key}&libraries=clusterer"></script>
 """
@@ -40,10 +44,13 @@ def kakao_map():
             minLevel: 6 // 클러스터 할 최소 지도 레벨
     });
 """
+    from datetime import date
+    from_date_str = "2021-02-23"
+    d = from_date_str.split('-')
+    from_date = date(int(d[0]), int(d[1]), int(d[2]))
     geolocation_dict = get_geolocation_info()
 
     data = f""" 
-        console.log("{geolocation_dict}");
         var geolocation_dict = {geolocation_dict};"""
     markers_html = """
         console.log(geolocation_dict)
@@ -75,7 +82,7 @@ def kakao_map():
         
             markers.push(marker);
         };
-    }"""
+"""
     zoom_controller = """
     // 지도 확대 축소를 제어할 수 있는 줌 컨트롤을 생성합니다
     var zoomControl = new kakao.maps.ZoomControl();
@@ -90,10 +97,10 @@ def kakao_map():
         var resultDiv = document.getElementById('result');
     
     });
-clusterer.addMarkers(markers);"""
+    clusterer.addMarkers(markers);
+}"""
 
     end_js = "</script>"
 
-    # return map_api_html + start_js + map_html + data + markers_html + zoom_controller + end_js
-    return map_api_html + start_js + map_html + data + markers_html + end_js
-
+    return map_api_html + start_js + map_html + data + markers_html + zoom_controller + end_js
+    # return map_api_html + start_js + map_html + data + markers_html + end_js
