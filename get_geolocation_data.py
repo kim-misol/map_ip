@@ -32,6 +32,7 @@ https://ipstack.com/quickstart
 }
 '''
 import json
+from datetime import date
 
 import requests
 
@@ -78,33 +79,37 @@ def get_geolocation_info_test_one_response():
     return geolocation_dict
 
 
-def get_geolocation_info():
+def get_geolocation_info(date_from=date.today()):
     geolocation_dict = []
     response = get_ip_addresses()
 
+    # response = response[:10]
     for line in response:
         r = line.split("  ")
         ip_address = r[0]
         hit_date = r[1].split(" ")[0]
+        d = hit_date.split('-')
+        hit_date_d = date(int(d[0]), int(d[1]), int(d[2]))
         hit_time = r[1].split(" ")[1]
-        link = F"http://api.ipstack.com/{ip_address}?access_key={ACCESS_KEY}"
-        response = requests.get(link)
-        if response.status_code == 200:
-            json_data = json.loads(response.text)
-            # hit date과 time 추가
-            temp_dict = {
-                "name": json_data['ip'],
-                "description": f"{json_data['city']} {json_data['region_name']} {json_data['country_name']}",
-                "zip": json_data['zip'],
-                "hit_date": hit_date,
-                "hit_time": hit_time,
-                "lat": json_data['latitude'],
-                "lng": json_data['longitude'],
-                "country_flag": json_data['location']['country_flag'],
-            }
-            geolocation_dict.append(temp_dict)
+        if hit_date_d < date_from:
+            break
         else:
-            pass
+            link = F"http://api.ipstack.com/{ip_address}?access_key={ACCESS_KEY}"
+            response = requests.get(link)
+            if response.status_code == 200:
+                json_data = json.loads(response.text)
+                # hit date과 time 추가
+                temp_dict = {
+                    "name": json_data['ip'],
+                    "description": f"{json_data['city']} {json_data['region_name']} {json_data['country_name']}",
+                    "zip": json_data['zip'],
+                    "hit_date": hit_date,
+                    "hit_time": hit_time,
+                    "lat": json_data['latitude'],
+                    "lng": json_data['longitude'],
+                    "country_flag": json_data['location']['country_flag'],
+                }
+                geolocation_dict.append(temp_dict)
 
     return geolocation_dict
 
