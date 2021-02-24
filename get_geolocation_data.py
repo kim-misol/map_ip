@@ -83,7 +83,6 @@ def get_geolocation_info(date_from=date.today()):
     geolocation_dict = []
     response = get_ip_addresses()
 
-    # response = response[:10]
     for line in response:
         r = line.split("  ")
         ip_address = r[0]
